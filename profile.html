@@ -1,48 +1,53 @@
-<script>
-async function loadProfile() {
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  const authorId = urlParams.get('author');
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Author Profile</title>
+</head>
+<body>
+  <h1 id="author-name">Loading Author...</h1>
+  <div id="author-submissions"></div>
 
-  const nameElement = document.getElementById('author-name');
-  const container = document.getElementById('author-submissions');
+  <script>
+  async function loadProfile() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const authorId = urlParams.get('author');
 
-  if (!authorId) {
-    nameElement.textContent = "Author Not Found";
-    return;
-  }
+    const nameElement = document.getElementById('author-name');
+    const container = document.getElementById('author-submissions');
 
-  try {
-    const response = await fetch('submissions.json');
-    const submissions = await response.json();
-
-    
-    const authorItems = submissions.filter(item => item.author === authorId);
-
-    if (authorItems.length === 0) {
-      container.innerHTML = "<p>No submissions found for this author.</p>";
+    if (!authorId) {
+      nameElement.textContent = "Author Not Found";
       return;
     }
 
-    
-    nameElement.textContent = authorItems[0].authorName;
+    try {
+      // Changed 'submissions.json' -> 'submission.json'
+      const response = await fetch('submission.json');
+      const submissions = await response.json();
 
-    
-    container.innerHTML = authorItems.map(item => `
-      <div class="card">
-        <h3><a href="${item.filePath}">${item.title}</a></h3>
-        <p>${item.description}</p>
-        <span class="badge">${item.category}</span>
-      </div>
-    `).join('');
+      const authorItems = submissions.filter(item => item.author === authorId);
 
-  } catch (error) {
-    console.error("Error loading profile:", error);
+      if (authorItems.length === 0) {
+        container.innerHTML = "<p>No submissions found for this author.</p>";
+        return;
+      }
+
+      nameElement.textContent = authorItems[0].authorName;
+
+      container.innerHTML = authorItems.map(item => `
+        <div class="card">
+          <h3><a href="${item.filePath}">${item.title}</a></h3>
+          <p>${item.description}</p>
+          <span class="badge">${item.category}</span>
+        </div>
+      `).join('');
+
+    } catch (error) {
+      console.error("Error loading profile:", error);
+    }
   }
-}
 
-
-loadProfile();
-</script>
-
-
+  loadProfile();
+  </script>
+</body>
+</html>
