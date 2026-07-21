@@ -1,0 +1,46 @@
+<script>
+async function loadProfile() {
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const authorId = urlParams.get('author');
+
+  const nameElement = document.getElementById('author-name');
+  const container = document.getElementById('author-submissions');
+
+  if (!authorId) {
+    nameElement.textContent = "Author Not Found";
+    return;
+  }
+
+  try {
+    const response = await fetch('submissions.json');
+    const submissions = await response.json();
+
+    
+    const authorItems = submissions.filter(item => item.author === authorId);
+
+    if (authorItems.length === 0) {
+      container.innerHTML = "<p>No submissions found for this author.</p>";
+      return;
+    }
+
+    
+    nameElement.textContent = authorItems[0].authorName;
+
+    
+    container.innerHTML = authorItems.map(item => `
+      <div class="card">
+        <h3><a href="${item.filePath}">${item.title}</a></h3>
+        <p>${item.description}</p>
+        <span class="badge">${item.category}</span>
+      </div>
+    `).join('');
+
+  } catch (error) {
+    console.error("Error loading profile:", error);
+  }
+}
+
+</script>
+
+loadProfile();
