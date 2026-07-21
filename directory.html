@@ -1,0 +1,33 @@
+
+<div id="directory"></div>
+<script>
+async function loadDirectory() {
+  const container = document.getElementById('directory');
+  
+  try {
+   
+    const response = await fetch('submission.json');
+    const submissions = await response.json();
+
+    
+    container.innerHTML = submissions.map(item => `
+      <div class="card">
+        <h3><a href="${item.filePath}">${item.title}</a></h3>
+        <p>${item.description}</p>
+        <span class="badge">${item.category}</span>
+        <p>
+          Submitted by: 
+          <a href="profile.html?author=${item.author}">${item.authorName}</a>
+        </p>
+      </div>
+    `).join('');
+
+  } catch (error) {
+    console.error("Error loading directory:", error);
+    container.innerHTML = "<p>Failed to load submissions.</p>";
+  }
+}
+
+loadDirectory();
+
+</script>
